@@ -1,17 +1,32 @@
 use ggez::event::{self, EventHandler};
 use ggez::graphics::{self, Color};
-use ggez::{Context, ContextBuilder, GameResult};
+use ggez::{conf, Context, ContextBuilder, GameResult};
 
 fn main() {
-    // Make a Context.
+    // set dimensions for window
+    let width = 50;
+    let height = 50;
+
+    // Configure window...
+    let cb = ContextBuilder::new("Conway", "ash")
+        .window_setup(conf::WindowSetup::default().title("Conway's"))
+        .window_mode(
+            conf::WindowMode::default().dimensions((width * 10) as f32, (height * 10) as f32),
+        );
+
+    /*
     let (mut ctx, event_loop) = ContextBuilder::new("conway", "ash")
         .build()
         .expect("aieee, could not create ggez context!");
+    */
+
+    // create a context and event loop...
+    let (mut ctx, event_loop) = cb.build().expect("guh, could not create ggez context.");
 
     // Create an instance of your event handler.
     // Usually, you should provide it with the Context object to
     // use when setting your game up.
-    let my_game = GOL::new(25, 25);
+    let my_game = GOL::new(&mut ctx, width, height).unwrap();
 
     // Run!
     event::run(ctx, event_loop, my_game);
@@ -21,16 +36,31 @@ struct GOL {
     cells: Vec<bool>,
     width: u32,
     height: u32,
+    cell_squares: Vec<graphics::Rect>,
 }
 
 impl GOL {
-    pub fn new(width: u32, height: u32) -> GOL {
+    pub fn new(ctx: &mut Context, width: u32, height: u32) -> GameResult<GOL> {
+        // creating grid of cell squares here...
+        let cell_squares: Vec<graphics::Rect> = vec![];
+        for i in 0..height {
+            for j in 0..width {}
+        }
+        Ok(GOL {
+            cells: vec![false; (width * height) as usize],
+            width,
+            height,
+            cell_squares,
+        })
+    }
+    pub fn new_no_ctx(width: u32, height: u32) -> GOL {
         // not using context here since we want to test the implementation
         // and we don't need to load images or anything like that
         GOL {
             cells: vec![false; (width * height) as usize],
             width,
             height,
+            cell_squares: vec![],
         }
     }
 
@@ -157,12 +187,17 @@ impl GOL {
 impl EventHandler for GOL {
     fn update(&mut self, _ctx: &mut Context) -> GameResult {
         // Update code here...
+        self.pass();
         Ok(())
     }
 
     fn draw(&mut self, ctx: &mut Context) -> GameResult {
         let mut canvas = graphics::Canvas::from_frame(ctx, Color::BLACK);
         // Draw code here...
+        for i in 0..*(&self.cells.len()) {
+            let pos = Self::usize_to_xy(i, self.width, self.height);
+            // check if cell is alive
+        }
         canvas.finish(ctx)
     }
 }
@@ -175,12 +210,12 @@ mod tests {
     // GOL tests...
     #[test]
     fn created_game_instance() {
-        GOL::new(25, 25);
+        GOL::new_no_ctx(25, 25);
     }
 
     fn all_neighbors_top_left_template(width: u32, height: u32) {
         // tests that the top left corner with all neighbors has a count of exactly 3 neighbors
-        let mut instance = GOL::new(width, height);
+        let mut instance = GOL::new_no_ctx(width, height);
         instance.make_cell_alive((0, 1)); // lower neighbor
         instance.make_cell_alive((1, 0)); // right neighbor
         instance.make_cell_alive((1, 1)); // lower-right neighbor
@@ -196,7 +231,7 @@ mod tests {
 
     fn all_neighbors_top_right_template(width: u32, height: u32) {
         // tests that the top left corner with all neighbors has a count of exactly 3 neighbors
-        let mut instance = GOL::new(width, height);
+        let mut instance = GOL::new_no_ctx(width, height);
         instance.make_cell_alive((width - 1, 1)); // lower neighbor
         instance.make_cell_alive((width - 2, 0)); // left neighbor
         instance.make_cell_alive((width - 2, 1)); // lower-left neighbor
@@ -212,7 +247,7 @@ mod tests {
 
     fn all_neighbors_bottom_left_template(width: u32, height: u32) {
         // tests that the top left corner with all neighbors has a count of exactly 3 neighbors
-        let mut instance = GOL::new(width, height);
+        let mut instance = GOL::new_no_ctx(width, height);
         instance.make_cell_alive((0, height - 2)); // upper neighbor
         instance.make_cell_alive((1, height - 1)); // right neighbor
         instance.make_cell_alive((1, height - 2)); // upper-right neighbor
@@ -228,7 +263,7 @@ mod tests {
 
     fn all_neighbors_bottom_right_template(width: u32, height: u32) {
         // tests that the top left corner with all neighbors has a count of exactly 3 neighbors
-        let mut instance = GOL::new(width, height);
+        let mut instance = GOL::new_no_ctx(width, height);
         instance.make_cell_alive((width - 1, height - 2)); // upper neighbor
         instance.make_cell_alive((width - 2, height - 1)); // left neighbor
         instance.make_cell_alive((width - 2, height - 2)); // upper-left neighbor
@@ -245,7 +280,7 @@ mod tests {
     fn all_neighbors_top_template(rng: &mut rand::rngs::ThreadRng) {
         let width = &rng.gen_range(3..2000);
         let height = &rng.gen_range(3..2000);
-        let mut instance = GOL::new(*width, *height);
+        let mut instance = GOL::new_no_ctx(*width, *height);
         let x = &rng.gen_range(1..width - 2);
         let x = *x;
         let y = 0; // must be at top row
@@ -267,7 +302,7 @@ mod tests {
     fn all_neighbors_bottom_template(rng: &mut rand::rngs::ThreadRng) {
         let width = &rng.gen_range(3..2000);
         let height = &rng.gen_range(3..2000);
-        let mut instance = GOL::new(*width, *height);
+        let mut instance = GOL::new_no_ctx(*width, *height);
         let x = &rng.gen_range(1..width - 2);
         let x = *x;
         let y = height - 1; // must be at top row
@@ -289,7 +324,7 @@ mod tests {
     fn all_neighbors_left_template(rng: &mut rand::rngs::ThreadRng) {
         let width = &rng.gen_range(3..2000);
         let height = &rng.gen_range(3..2000);
-        let mut instance = GOL::new(*width, *height);
+        let mut instance = GOL::new_no_ctx(*width, *height);
         let x = 0; // must be left side
         let y = &rng.gen_range(1..height - 2);
         let y = *y;
@@ -311,7 +346,7 @@ mod tests {
     fn all_neighbors_right_template(rng: &mut rand::rngs::ThreadRng) {
         let width = &rng.gen_range(3..2000);
         let height = &rng.gen_range(3..2000);
-        let mut instance = GOL::new(*width, *height);
+        let mut instance = GOL::new_no_ctx(*width, *height);
         let x = height - 1; // must be left side
         let y = &rng.gen_range(1..height - 2);
         let y = *y;
@@ -333,7 +368,7 @@ mod tests {
     fn arbitrary_center_template(rng: &mut rand::rngs::ThreadRng) {
         let width = &rng.gen_range(3..2000);
         let height = &rng.gen_range(3..2000);
-        let mut instance = GOL::new(*width, *height);
+        let mut instance = GOL::new_no_ctx(*width, *height);
         let x = &rng.gen_range(1..width - 2);
         let x = *x;
         let y = &rng.gen_range(1..height - 2);
