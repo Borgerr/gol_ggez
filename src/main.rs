@@ -345,6 +345,34 @@ mod tests {
         all_neighbors_right_template(&mut rng);
     }
 
+    fn arbitrary_center_template(rng: &mut rand::rngs::ThreadRng) {
+        let width = &rng.gen_range(3..2000);
+        let height = &rng.gen_range(3..2000);
+        let mut instance = GOL::new(*width, *height);
+        let x = &rng.gen_range((1..width - 2));
+        let x = *x;
+        let y = &rng.gen_range(1..height - 2);
+        let y = *y;
+
+        instance.make_cell_alive((x, y - 1)); // top neighbor
+        instance.make_cell_alive((x, y + 1)); // bottom neighbor
+        instance.make_cell_alive((x - 1, y - 1)); // top left neighbor
+        instance.make_cell_alive((x - 1, y)); // left neighbor
+        instance.make_cell_alive((x - 1, y + 1)); // bottom left neighbor
+        instance.make_cell_alive((x + 1, y - 1)); // top right neighbor
+        instance.make_cell_alive((x + 1, y)); // right neighbor
+        instance.make_cell_alive((x + 1, y + 1)); // bottom right neighbor
+        assert_eq!(instance.count_alive_neighbors((x, y)), 8);
+    }
+    #[test]
+    fn arbitrary_center_all_neighbors_alive() {
+        let mut rng = rand::thread_rng();
+        arbitrary_center_template(&mut rng);
+        arbitrary_center_template(&mut rng);
+        arbitrary_center_template(&mut rng);
+        arbitrary_center_template(&mut rng);
+    }
+
     // cell tests...
     #[test]
     fn check_clone() {
