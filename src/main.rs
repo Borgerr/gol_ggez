@@ -193,14 +193,13 @@ mod tests {
         instance.make_cell_alive((1, 1)); // lower-right neighbor
         assert_eq!(instance.count_alive_neighbors((0, 0)), 3);
     }
-
     #[test]
     fn all_neighbors_top_left() {
         let mut rng = rand::thread_rng();
-        all_neighbors_top_left_template(rng.gen_range(0..2000), rng.gen_range(0..2000));
-        all_neighbors_top_left_template(rng.gen_range(0..2000), rng.gen_range(0..2000));
-        all_neighbors_top_left_template(rng.gen_range(0..2000), rng.gen_range(0..2000));
-        all_neighbors_top_left_template(rng.gen_range(0..2000), rng.gen_range(0..2000));
+        all_neighbors_top_left_template(rng.gen_range(3..2000), rng.gen_range(3..2000));
+        all_neighbors_top_left_template(rng.gen_range(3..2000), rng.gen_range(3..2000));
+        all_neighbors_top_left_template(rng.gen_range(3..2000), rng.gen_range(3..2000));
+        all_neighbors_top_left_template(rng.gen_range(3..2000), rng.gen_range(3..2000));
     }
 
     fn all_neighbors_top_right_template(width: u32, height: u32) {
@@ -208,17 +207,16 @@ mod tests {
         let mut instance = GOL::new(width, height);
         instance.make_cell_alive((width - 1, 1)); // lower neighbor
         instance.make_cell_alive((width - 2, 0)); // left neighbor
-        instance.make_cell_alive((width - 1, 1)); // lower-left neighbor
+        instance.make_cell_alive((width - 2, 1)); // lower-left neighbor
         assert_eq!(instance.count_alive_neighbors((width - 1, 0)), 3);
     }
-
     #[test]
     fn all_neighbors_top_right() {
         let mut rng = rand::thread_rng();
-        all_neighbors_top_right_template(rng.gen_range(0..2000), rng.gen_range(0..2000));
-        all_neighbors_top_right_template(rng.gen_range(0..2000), rng.gen_range(0..2000));
-        all_neighbors_top_right_template(rng.gen_range(0..2000), rng.gen_range(0..2000));
-        all_neighbors_top_right_template(rng.gen_range(0..2000), rng.gen_range(0..2000));
+        all_neighbors_top_right_template(rng.gen_range(3..2000), rng.gen_range(3..2000));
+        all_neighbors_top_right_template(rng.gen_range(3..2000), rng.gen_range(3..2000));
+        all_neighbors_top_right_template(rng.gen_range(3..2000), rng.gen_range(3..2000));
+        all_neighbors_top_right_template(rng.gen_range(3..2000), rng.gen_range(3..2000));
     }
 
     fn all_neighbors_bottom_left_template(width: u32, height: u32) {
@@ -229,14 +227,13 @@ mod tests {
         instance.make_cell_alive((1, height - 2)); // upper-right neighbor
         assert_eq!(instance.count_alive_neighbors((0, height - 1)), 3);
     }
-
     #[test]
     fn all_neighbors_bottom_left() {
         let mut rng = rand::thread_rng();
-        all_neighbors_bottom_left_template(rng.gen_range(0..2000), rng.gen_range(0..2000));
-        all_neighbors_bottom_left_template(rng.gen_range(0..2000), rng.gen_range(0..2000));
-        all_neighbors_bottom_left_template(rng.gen_range(0..2000), rng.gen_range(0..2000));
-        all_neighbors_bottom_left_template(rng.gen_range(0..2000), rng.gen_range(0..2000));
+        all_neighbors_bottom_left_template(rng.gen_range(3..2000), rng.gen_range(3..2000));
+        all_neighbors_bottom_left_template(rng.gen_range(3..2000), rng.gen_range(3..2000));
+        all_neighbors_bottom_left_template(rng.gen_range(3..2000), rng.gen_range(3..2000));
+        all_neighbors_bottom_left_template(rng.gen_range(3..2000), rng.gen_range(3..2000));
     }
 
     fn all_neighbors_bottom_right_template(width: u32, height: u32) {
@@ -247,16 +244,108 @@ mod tests {
         instance.make_cell_alive((width - 2, height - 2)); // upper-left neighbor
         assert_eq!(instance.count_alive_neighbors((width - 1, height - 1)), 3);
     }
-
     #[test]
     fn all_neighbors_bottom_right() {
         let mut rng = rand::thread_rng();
-        all_neighbors_bottom_right_template(rng.gen_range(0..2000), rng.gen_range(0..2000));
-        all_neighbors_bottom_right_template(rng.gen_range(0..2000), rng.gen_range(0..2000));
-        all_neighbors_bottom_right_template(rng.gen_range(0..2000), rng.gen_range(0..2000));
-        all_neighbors_bottom_right_template(rng.gen_range(0..2000), rng.gen_range(0..2000));
+        all_neighbors_bottom_right_template(rng.gen_range(3..2000), rng.gen_range(3..2000));
+        all_neighbors_bottom_right_template(rng.gen_range(3..2000), rng.gen_range(3..2000));
+        all_neighbors_bottom_right_template(rng.gen_range(3..2000), rng.gen_range(3..2000));
+        all_neighbors_bottom_right_template(rng.gen_range(3..2000), rng.gen_range(3..2000));
     }
 
+    fn all_neighbors_top_template(rng: &mut rand::rngs::ThreadRng) {
+        let width = &rng.gen_range(3..2000);
+        let height = &rng.gen_range(3..2000);
+        let mut instance = GOL::new(*width, *height);
+        let x = &rng.gen_range(1..width - 2);
+        let x = *x;
+        let y = 0; // must be at top row
+        instance.make_cell_alive((x - 1, y)); // left neighbor
+        instance.make_cell_alive((x + 1, y)); // right neighbor
+        instance.make_cell_alive((x - 1, y + 1)); // bottom left neighbor
+        instance.make_cell_alive((x, y + 1)); // bottom neighbor
+        instance.make_cell_alive((x + 1, y + 1)); // bottom right neighbor
+        assert_eq!(instance.count_alive_neighbors((x, y)), 5);
+    }
+    #[test]
+    fn all_neighbors_top() {
+        let mut rng = rand::thread_rng();
+        all_neighbors_top_template(&mut rng);
+        all_neighbors_top_template(&mut rng);
+        all_neighbors_top_template(&mut rng);
+        all_neighbors_top_template(&mut rng);
+    }
+
+    fn all_neighbors_bottom_template(rng: &mut rand::rngs::ThreadRng) {
+        let width = &rng.gen_range(3..2000);
+        let height = &rng.gen_range(3..2000);
+        let mut instance = GOL::new(*width, *height);
+        let x = &rng.gen_range(1..width - 2);
+        let x = *x;
+        let y = height - 1; // must be at top row
+        instance.make_cell_alive((x - 1, y)); // left neighbor
+        instance.make_cell_alive((x + 1, y)); // right neighbor
+        instance.make_cell_alive((x - 1, y - 1)); // top left neighbor
+        instance.make_cell_alive((x, y - 1)); // top neighbor
+        instance.make_cell_alive((x + 1, y - 1)); // top right neighbor
+        assert_eq!(instance.count_alive_neighbors((x, y)), 5);
+    }
+    #[test]
+    fn all_neighbors_bottom() {
+        let mut rng = rand::thread_rng();
+        all_neighbors_bottom_template(&mut rng);
+        all_neighbors_bottom_template(&mut rng);
+        all_neighbors_bottom_template(&mut rng);
+        all_neighbors_bottom_template(&mut rng);
+    }
+
+    fn all_neighbors_left_template(rng: &mut rand::rngs::ThreadRng) {
+        let width = &rng.gen_range(3..2000);
+        let height = &rng.gen_range(3..2000);
+        let mut instance = GOL::new(*width, *height);
+        let x = 0; // must be left side
+        let y = &rng.gen_range(1..height - 2);
+        let y = *y;
+        instance.make_cell_alive((x, y - 1)); // top neighbor
+        instance.make_cell_alive((x, y + 1)); // bottom neighbor
+        instance.make_cell_alive((x + 1, y - 1)); // top right neighbor
+        instance.make_cell_alive((x + 1, y)); // right neighbor
+        instance.make_cell_alive((x + 1, y + 1)); // bottom right neighbor
+        assert_eq!(instance.count_alive_neighbors((x, y)), 5);
+    }
+    #[test]
+    fn all_neighbors_left() {
+        let mut rng = rand::thread_rng();
+        all_neighbors_left_template(&mut rng);
+        all_neighbors_left_template(&mut rng);
+        all_neighbors_left_template(&mut rng);
+        all_neighbors_left_template(&mut rng);
+    }
+
+    fn all_neighbors_right_template(rng: &mut rand::rngs::ThreadRng) {
+        let width = &rng.gen_range(3..2000);
+        let height = &rng.gen_range(3..2000);
+        let mut instance = GOL::new(*width, *height);
+        let x = height - 1; // must be left side
+        let y = &rng.gen_range(1..height - 2);
+        let y = *y;
+        instance.make_cell_alive((x, y - 1)); // top neighbor
+        instance.make_cell_alive((x, y + 1)); // bottom neighbor
+        instance.make_cell_alive((x - 1, y - 1)); // top left neighbor
+        instance.make_cell_alive((x - 1, y)); // left neighbor
+        instance.make_cell_alive((x - 1, y + 1)); // bottom left neighbor
+        assert_eq!(instance.count_alive_neighbors((x, y)), 5);
+    }
+    #[test]
+    fn all_neighbors_right() {
+        let mut rng = rand::thread_rng();
+        all_neighbors_right_template(&mut rng);
+        all_neighbors_right_template(&mut rng);
+        all_neighbors_right_template(&mut rng);
+        all_neighbors_right_template(&mut rng);
+    }
+
+    // cell tests...
     #[test]
     fn check_clone() {
         let c = Cell::new();
