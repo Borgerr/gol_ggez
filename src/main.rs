@@ -18,7 +18,7 @@ fn main() {
 }
 
 struct GOL {
-    cells: Vec<Cell>,
+    cells: Vec<bool>,
     width: u32,
     height: u32,
 }
@@ -28,7 +28,7 @@ impl GOL {
         // not using context here since we want to test the implementation
         // and we don't need to load images or anything like that
         GOL {
-            cells: vec![Cell::new(); (width * height) as usize],
+            cells: vec![false; (width * height) as usize],
             width,
             height,
         }
@@ -60,22 +60,18 @@ impl GOL {
                 // top left neighbor
                 if self.cells
                     [Self::xy_to_usize(((x - 1) as u32, (y - 1) as u32), self.width, self.height)]
-                .alive
                 {
                     counter += 1;
                 }
             }
             // top middle neighbor
-            if self.cells[Self::xy_to_usize((x as u32, (y - 1) as u32), self.width, self.height)]
-                .alive
-            {
+            if self.cells[Self::xy_to_usize((x as u32, (y - 1) as u32), self.width, self.height)] {
                 counter += 1;
             }
             if right_boundary_valid {
                 // top right neighbor
                 if self.cells
                     [Self::xy_to_usize(((x + 1) as u32, (y - 1) as u32), self.width, self.height)]
-                .alive
                 {
                     counter += 1;
                 }
@@ -85,17 +81,13 @@ impl GOL {
         // middle neighbors
         if left_boundary_valid {
             // left mid neighbor
-            if self.cells[Self::xy_to_usize(((x - 1) as u32, y as u32), self.width, self.height)]
-                .alive
-            {
+            if self.cells[Self::xy_to_usize(((x - 1) as u32, y as u32), self.width, self.height)] {
                 counter += 1;
             }
         }
         if right_boundary_valid {
             // right middle neighbor
-            if self.cells[Self::xy_to_usize(((x + 1) as u32, y as u32), self.width, self.height)]
-                .alive
-            {
+            if self.cells[Self::xy_to_usize(((x + 1) as u32, y as u32), self.width, self.height)] {
                 counter += 1;
             }
         }
@@ -106,22 +98,18 @@ impl GOL {
                 // bottom left neighbor
                 if self.cells
                     [Self::xy_to_usize(((x - 1) as u32, (y + 1) as u32), self.width, self.height)]
-                .alive
                 {
                     counter += 1;
                 }
             }
             // bottom middle neighbor
-            if self.cells[Self::xy_to_usize((x as u32, (y + 1) as u32), self.width, self.height)]
-                .alive
-            {
+            if self.cells[Self::xy_to_usize((x as u32, (y + 1) as u32), self.width, self.height)] {
                 counter += 1;
             }
             if right_boundary_valid {
                 // bottom right neighbor
                 if self.cells
                     [Self::xy_to_usize(((x + 1) as u32, (y + 1) as u32), self.width, self.height)]
-                .alive
                 {
                     counter += 1;
                 }
@@ -131,15 +119,38 @@ impl GOL {
         counter
     }
 
+    // the following three functions all have to do with interactions on click
     pub fn make_cell_alive(&mut self, xy: (u32, u32)) {
-        self.cells[Self::xy_to_usize(xy, self.width, self.height)].alive = true;
+        self.cells[Self::xy_to_usize(xy, self.width, self.height)] = true;
     }
     pub fn kill_cell(&mut self, xy: (u32, u32)) {
-        self.cells[Self::xy_to_usize(xy, self.width, self.height)].alive = false;
+        self.cells[Self::xy_to_usize(xy, self.width, self.height)] = false;
     }
     pub fn switch_cell(&mut self, xy: (u32, u32)) {
-        self.cells[Self::xy_to_usize(xy, self.width, self.height)].alive =
-            !self.cells[Self::xy_to_usize(xy, self.width, self.height)].alive;
+        self.cells[Self::xy_to_usize(xy, self.width, self.height)] =
+            !self.cells[Self::xy_to_usize(xy, self.width, self.height)];
+    }
+
+    pub fn pass(&mut self) {
+        // represents a single pass of GOL
+        // this is where all the actual logic of the game comes together
+        for i in 0..*(&self.cells.len()) {
+            let pos = Self::usize_to_xy(i, self.width, self.height);
+            let alive_neighbor_count = self.count_alive_neighbors(pos);
+
+            // using condensed rules...
+            if self.cells[i] && (alive_neighbor_count == 2 || alive_neighbor_count == 3) {
+                // any live cell with two or three live neighbours survives
+                continue;
+            } else if !(self.cells[i]) && (alive_neighbor_count == 3) {
+                // any dead cell with three live neighbours becomes a live cell
+                self.cells[i] = true;
+            } else {
+                // all other live cells die in the next generation
+                // obviously all other dead cells stay dead
+                self.cells[i] = false;
+            }
+        }
     }
 }
 
@@ -153,24 +164,6 @@ impl EventHandler for GOL {
         let mut canvas = graphics::Canvas::from_frame(ctx, Color::BLACK);
         // Draw code here...
         canvas.finish(ctx)
-    }
-}
-
-struct Cell {
-    alive: bool,
-}
-
-impl Cell {
-    pub fn new() -> Self {
-        Cell { alive: false }
-    }
-}
-
-impl Clone for Cell {
-    fn clone(&self) -> Self {
-        Self {
-            alive: self.alive.clone(),
-        }
     }
 }
 
@@ -362,12 +355,5 @@ mod tests {
         for _i in 0..10 {
             arbitrary_center_template(&mut rng);
         }
-    }
-
-    // cell tests...
-    #[test]
-    fn check_clone() {
-        let c = Cell::new();
-        assert_eq!(c.alive, c.clone().alive);
     }
 }
