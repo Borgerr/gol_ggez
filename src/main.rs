@@ -196,10 +196,9 @@ mod tests {
     #[test]
     fn all_neighbors_top_left() {
         let mut rng = rand::thread_rng();
-        all_neighbors_top_left_template(rng.gen_range(3..2000), rng.gen_range(3..2000));
-        all_neighbors_top_left_template(rng.gen_range(3..2000), rng.gen_range(3..2000));
-        all_neighbors_top_left_template(rng.gen_range(3..2000), rng.gen_range(3..2000));
-        all_neighbors_top_left_template(rng.gen_range(3..2000), rng.gen_range(3..2000));
+        for _i in 0..10 {
+            all_neighbors_top_left_template(rng.gen_range(3..2000), rng.gen_range(3..2000));
+        }
     }
 
     fn all_neighbors_top_right_template(width: u32, height: u32) {
@@ -213,10 +212,9 @@ mod tests {
     #[test]
     fn all_neighbors_top_right() {
         let mut rng = rand::thread_rng();
-        all_neighbors_top_right_template(rng.gen_range(3..2000), rng.gen_range(3..2000));
-        all_neighbors_top_right_template(rng.gen_range(3..2000), rng.gen_range(3..2000));
-        all_neighbors_top_right_template(rng.gen_range(3..2000), rng.gen_range(3..2000));
-        all_neighbors_top_right_template(rng.gen_range(3..2000), rng.gen_range(3..2000));
+        for _i in 0..10 {
+            all_neighbors_top_right_template(rng.gen_range(3..2000), rng.gen_range(3..2000));
+        }
     }
 
     fn all_neighbors_bottom_left_template(width: u32, height: u32) {
@@ -230,10 +228,9 @@ mod tests {
     #[test]
     fn all_neighbors_bottom_left() {
         let mut rng = rand::thread_rng();
-        all_neighbors_bottom_left_template(rng.gen_range(3..2000), rng.gen_range(3..2000));
-        all_neighbors_bottom_left_template(rng.gen_range(3..2000), rng.gen_range(3..2000));
-        all_neighbors_bottom_left_template(rng.gen_range(3..2000), rng.gen_range(3..2000));
-        all_neighbors_bottom_left_template(rng.gen_range(3..2000), rng.gen_range(3..2000));
+        for _i in 0..10 {
+            all_neighbors_bottom_left_template(rng.gen_range(3..2000), rng.gen_range(3..2000));
+        }
     }
 
     fn all_neighbors_bottom_right_template(width: u32, height: u32) {
@@ -247,10 +244,9 @@ mod tests {
     #[test]
     fn all_neighbors_bottom_right() {
         let mut rng = rand::thread_rng();
-        all_neighbors_bottom_right_template(rng.gen_range(3..2000), rng.gen_range(3..2000));
-        all_neighbors_bottom_right_template(rng.gen_range(3..2000), rng.gen_range(3..2000));
-        all_neighbors_bottom_right_template(rng.gen_range(3..2000), rng.gen_range(3..2000));
-        all_neighbors_bottom_right_template(rng.gen_range(3..2000), rng.gen_range(3..2000));
+        for _i in 0..10 {
+            all_neighbors_bottom_right_template(rng.gen_range(3..2000), rng.gen_range(3..2000));
+        }
     }
 
     fn all_neighbors_top_template(rng: &mut rand::rngs::ThreadRng) {
@@ -270,10 +266,9 @@ mod tests {
     #[test]
     fn all_neighbors_top() {
         let mut rng = rand::thread_rng();
-        all_neighbors_top_template(&mut rng);
-        all_neighbors_top_template(&mut rng);
-        all_neighbors_top_template(&mut rng);
-        all_neighbors_top_template(&mut rng);
+        for _i in 0..10 {
+            all_neighbors_top_template(&mut rng);
+        }
     }
 
     fn all_neighbors_bottom_template(rng: &mut rand::rngs::ThreadRng) {
@@ -293,10 +288,9 @@ mod tests {
     #[test]
     fn all_neighbors_bottom() {
         let mut rng = rand::thread_rng();
-        all_neighbors_bottom_template(&mut rng);
-        all_neighbors_bottom_template(&mut rng);
-        all_neighbors_bottom_template(&mut rng);
-        all_neighbors_bottom_template(&mut rng);
+        for _i in 0..10 {
+            all_neighbors_bottom_template(&mut rng);
+        }
     }
 
     fn all_neighbors_left_template(rng: &mut rand::rngs::ThreadRng) {
@@ -316,10 +310,9 @@ mod tests {
     #[test]
     fn all_neighbors_left() {
         let mut rng = rand::thread_rng();
-        all_neighbors_left_template(&mut rng);
-        all_neighbors_left_template(&mut rng);
-        all_neighbors_left_template(&mut rng);
-        all_neighbors_left_template(&mut rng);
+        for _i in 0..10 {
+            all_neighbors_left_template(&mut rng);
+        }
     }
 
     fn all_neighbors_right_template(rng: &mut rand::rngs::ThreadRng) {
@@ -339,17 +332,16 @@ mod tests {
     #[test]
     fn all_neighbors_right() {
         let mut rng = rand::thread_rng();
-        all_neighbors_right_template(&mut rng);
-        all_neighbors_right_template(&mut rng);
-        all_neighbors_right_template(&mut rng);
-        all_neighbors_right_template(&mut rng);
+        for _i in 0..10 {
+            all_neighbors_right_template(&mut rng);
+        }
     }
 
     fn arbitrary_center_template(rng: &mut rand::rngs::ThreadRng) {
         let width = &rng.gen_range(3..2000);
         let height = &rng.gen_range(3..2000);
         let mut instance = GOL::new(*width, *height);
-        let x = &rng.gen_range((1..width - 2));
+        let x = &rng.gen_range(1..width - 2);
         let x = *x;
         let y = &rng.gen_range(1..height - 2);
         let y = *y;
@@ -367,10 +359,9 @@ mod tests {
     #[test]
     fn arbitrary_center_all_neighbors_alive() {
         let mut rng = rand::thread_rng();
-        arbitrary_center_template(&mut rng);
-        arbitrary_center_template(&mut rng);
-        arbitrary_center_template(&mut rng);
-        arbitrary_center_template(&mut rng);
+        for _i in 0..10 {
+            arbitrary_center_template(&mut rng);
+        }
     }
 
     // cell tests...
