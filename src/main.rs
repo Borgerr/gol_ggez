@@ -1,5 +1,6 @@
 use ggez::event::{self, EventHandler};
-use ggez::graphics::{self, Color};
+use ggez::graphics;
+use ggez::input::keyboard;
 use ggez::{conf, Context, ContextBuilder, GameResult};
 use rand::Rng;
 
@@ -50,6 +51,7 @@ struct GOL {
     width: u32,
     height: u32,
     cell_squares: Vec<graphics::Mesh>,
+    paused: bool,
 }
 
 impl GOL {
@@ -79,8 +81,10 @@ impl GOL {
             width,
             height,
             cell_squares,
+            paused: false,
         })
     }
+
     pub fn new_no_ctx(width: u32, height: u32) -> GOL {
         // not using context here since we want to test the implementation
         // and we don't need to load images or anything like that
@@ -89,6 +93,7 @@ impl GOL {
             width,
             height,
             cell_squares: vec![],
+            paused: false,
         }
     }
 
@@ -205,24 +210,34 @@ impl GOL {
         self.cells = new_cells;
     }
 
+    // interactions...
     pub fn randomize(&mut self) {
+        // game completely randomizes on "R" keypress
         let mut rng = rand::thread_rng();
         for i in 0..self.cells.len() {
             self.cells[i] = rng.gen_bool(1.0 / 8.0); // one eighth
         }
+    }
+    pub fn pause(&mut self) {
+        // game pauses on "P" keypress
+        self.paused = !self.paused;
     }
 }
 
 impl EventHandler for GOL {
     fn update(&mut self, _ctx: &mut Context) -> GameResult {
         // Update code here...
-        self.pass();
+        if !self.paused {
+            self.pass();
+        }
         Ok(())
     }
 
     fn draw(&mut self, ctx: &mut Context) -> GameResult {
-        let mut canvas = graphics::Canvas::from_frame(ctx, graphics::Color::WHITE);
+        let mut canvas = graphics::Canvas::from_frame(ctx, None);
         // Draw code here...
+        // continues drawing even when paused because of keypress N
+        // which passes by one
         for i in 0..*(&self.cells.len()) {
             if self.cells[i] {
                 // cell is alive
@@ -238,9 +253,35 @@ impl EventHandler for GOL {
                 );
             }
         }
+
         canvas.finish(ctx)
+    }
+
+    fn key_down_event(
+        &mut self,
+        ctx: &mut Context,
+        input: keyboard::KeyInput,
+        _repeated: bool,
+    ) -> Result<(), ggez::GameError> {
+        match input.keycode {
+            None => (),
+            Some(kc) => match kc {
+                keyboard::KeyCode::Escape => ctx.request_quit(),
+                keyboard::KeyCode::R => self.randomize(),
+                keyboard::KeyCode::P => self.pause(),
+                keyboard::KeyCode::N => {
+                    // pass by one, should only be a thing on pause
+                    if self.paused {
+                        self.pass()
+                    }
+                }
+                _ => (),
+            },
+        }
+
+        Ok(())
     }
 }
 
 // for the tests
-//mod tests;
+mod tests;
