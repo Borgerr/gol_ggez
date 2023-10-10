@@ -245,6 +245,17 @@ fn square_all_stays_alive() {
     for i in usize2 + 1..usize3 {
         assert!(!instance.cells[i]);
     }
+
+    // check grid squares directly underneath the square
+    for y in 2..24 {
+        let temp_xy_left = xy_to_usize((0, y), 25, 25);
+        let temp_xy_right = xy_to_usize((1, y), 25, 25);
+
+        assert!(!instance.cells[temp_xy_left]);
+        assert!(!instance.cells[temp_xy_right]);
+    }
+
+    // check rest of the grid
     for i in usize4 + 1..(25 * 25) {
         assert!(!instance.cells[i]);
     }
