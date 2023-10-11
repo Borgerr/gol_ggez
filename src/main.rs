@@ -215,7 +215,7 @@ impl GOL {
         // game completely randomizes on "R" keypress
         let mut rng = rand::thread_rng();
         for i in 0..self.cells.len() {
-            self.cells[i] = rng.gen_bool(1.0 / 8.0); // one eighth
+            self.cells[i] = rng.gen_bool(1.0 / 2.0); // one eighth
         }
     }
     pub fn pause(&mut self) {
